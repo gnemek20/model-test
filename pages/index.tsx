@@ -309,6 +309,7 @@ const Home = () => {
         fade("out", humanModel!);
       }
       else {
+        fade("out", brainModel!);
         fade("in", humanModel!);
       }
     };
