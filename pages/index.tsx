@@ -271,13 +271,13 @@ const Home = () => {
 
       const spheres: THREE.Mesh[] = [];
       sphereInfos.forEach((info) => {
-        // info.position.add(info.velocity);
-        // info.mesh.position.copy(info.position);
+        info.position.add(info.velocity);
+        info.mesh.position.copy(info.position);
 
-        // if (info.position.length() > maxDistance) {
-        //   info.position.normalize().multiplyScalar(maxDistance);
-        //   info.velocity.reflect(info.position.clone().normalize());
-        // }
+        if (info.position.length() > maxDistance) {
+          info.position.normalize().multiplyScalar(maxDistance);
+          info.velocity.reflect(info.position.clone().normalize());
+        }
 
         spheres.push(info.mesh);
       });
