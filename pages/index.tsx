@@ -59,8 +59,18 @@ const Home = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 5);
     scene.add(ambientLight);
 
-    let humanModel: THREE.Object3D | null = null;
     const loader = new GLTFLoader();
+    let spaceModel: THREE.Object3D | null = null;
+    loader.load("/models/space.glb", (gltf) => {
+      spaceModel = gltf.scene;
+
+      spaceModel.scale.set(5, 5, 5);
+      spaceModel.position.set(0, 0, 0);
+
+      scene.add(spaceModel);
+    });
+
+    let humanModel: THREE.Object3D | null = null;
     loader.load("/models/human.glb", (gltf) => {
       humanModel = gltf.scene;
 
@@ -208,7 +218,7 @@ const Home = () => {
       const sprites: THREE.Sprite[] = [];
 
       spheres.forEach((sphere, idx) => {
-        const sprite = createTextSprite(`S${idx}`, 64, "#ffffff");
+        const sprite = createTextSprite(`S${idx}`, 64, "#000000");
 
         sprite.position.set(
           sphere.position.x,
@@ -253,7 +263,7 @@ const Home = () => {
   
       const geometry = new THREE.BufferGeometry().setFromPoints(points);
       const material = new THREE.LineBasicMaterial({
-        color: 0xffffff,
+        color: 0x000000,
         transparent: true,
         opacity: 0.3,
       });
@@ -265,6 +275,9 @@ const Home = () => {
 
     let sprites: THREE.Sprite[] = [];
     let lines: THREE.LineSegments | null = null;
+
+    let currentBackground = new THREE.Color(0x000000);
+    let targetBackground = new THREE.Color(0x000000);
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -292,6 +305,9 @@ const Home = () => {
       }
       lines = connectSpheres(spheres);
 
+      currentBackground.lerp(targetBackground, 0.075);
+      scene.background = currentBackground.clone();
+
       controls.update();
       composer.render();
     };
@@ -302,9 +318,11 @@ const Home = () => {
       console.log(distance)
       
       if (distance < 3) {
+        targetBackground.set(0xffffff);
         fade("out", brainModel!, 0.01);
       }
       else if (distance < 11) {
+        targetBackground.set(0x000000)
         fade("in", brainModel!, 0.005);
         fade("out", humanModel!);
       }
